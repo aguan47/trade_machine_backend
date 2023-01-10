@@ -77,6 +77,11 @@ def hello_world():
     list1 = matching(to_be_traded)
     list2 = matching(to_get)
 
+    print(f'\n Trading {list1} for {list2}')
+    print('Getting player info...')
+
+
+
     # Get the information of the players
     player_id1 = act_players_info.query('PLAYER_NAME in @list1')
     player_id2 = act_players_info.query('PLAYER_NAME in @list2')
@@ -84,6 +89,9 @@ def hello_world():
 
     team1_plyr = player_id1.PLAYER_ID
     team2_plyr = player_id2.PLAYER_ID
+
+
+    print('Getting player stats...')
 
     plyr_ros1 = get_player_stats(team1_plyr)
     plyr_ros2 = get_player_stats(team2_plyr)
@@ -101,6 +109,8 @@ def hello_world():
             (player_stats2['PTS']*1) + (player_stats2['REB']*1.2) + (player_stats2['AST']*1.5) + (player_stats2['STL']*2) + (player_stats2['BLK']*2) + (player_stats2['TOV']*-1)
 
 
+    print('Performing statistical test...\n')
+
     # Statistical tests
     from scipy import stats
 
@@ -111,11 +121,13 @@ def hello_world():
     alpha = 0.05
 
     if p_value <= alpha:
+        print('Conclusion:','Since p-value(=%f)'%p_value,'<','alpha(=%.2f)'%alpha,'''We reject the null hypothesis H0. TRADE IS NOT BALANCED at %.2f level of significance.'''%alpha)
         return {
             'isBalanced': False,
             'message': 'TRADE IS NOT BALANCED with a p-value of {}, alpha of {}'.format(p_value, alpha)
         }
 
+    print('Conclusion:','Since p-value(=%f)'%p_value,'>','alpha(=%.2f)'%alpha,'''We fail to reject the null hypothesis H0. TRADE IS BALANCED''')
     return {
         'isBalanced': True,
         'message': 'TRADE IS BALANCED with a p-value of {}, alpha of {}'.format(p_value, alpha)
