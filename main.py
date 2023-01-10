@@ -3,6 +3,8 @@ from flask import request
 
 app = Flask(__name__)
 
+print("Running Flask")
+
 import pandas as pd
 import time
 import csv
