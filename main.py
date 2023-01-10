@@ -3,7 +3,7 @@ from flask import request
 
 app = Flask(__name__)
 
-print("Running Flask")
+print("Running Flask", flush=True)
 
 import pandas as pd
 import time
@@ -80,7 +80,7 @@ def hello_world():
     list2 = matching(to_get)
 
     print(f'\n Trading {list1} for {list2}')
-    print('Getting player info...')
+    print('Getting player info...', flush=True)
 
 
 
@@ -93,7 +93,7 @@ def hello_world():
     team2_plyr = player_id2.PLAYER_ID
 
 
-    print('Getting player stats...')
+    print('Getting player stats...', flush=True)
 
     plyr_ros1 = get_player_stats(team1_plyr)
     plyr_ros2 = get_player_stats(team2_plyr)
@@ -111,7 +111,7 @@ def hello_world():
             (player_stats2['PTS']*1) + (player_stats2['REB']*1.2) + (player_stats2['AST']*1.5) + (player_stats2['STL']*2) + (player_stats2['BLK']*2) + (player_stats2['TOV']*-1)
 
 
-    print('Performing statistical test...\n')
+    print('Performing statistical test...\n', flush=True)
 
     # Statistical tests
     from scipy import stats
@@ -123,13 +123,13 @@ def hello_world():
     alpha = 0.05
 
     if p_value <= alpha:
-        print('Conclusion:','Since p-value(=%f)'%p_value,'<','alpha(=%.2f)'%alpha,'''We reject the null hypothesis H0. TRADE IS NOT BALANCED at %.2f level of significance.'''%alpha)
+        print('Conclusion:','Since p-value(=%f)'%p_value,'<','alpha(=%.2f)'%alpha,'''We reject the null hypothesis H0. TRADE IS NOT BALANCED at %.2f level of significance.'''%alpha, flush=True)
         return {
             'isBalanced': False,
             'message': 'TRADE IS NOT BALANCED with a p-value of {}, alpha of {}'.format(p_value, alpha)
         }
 
-    print('Conclusion:','Since p-value(=%f)'%p_value,'>','alpha(=%.2f)'%alpha,'''We fail to reject the null hypothesis H0. TRADE IS BALANCED''')
+    print('Conclusion:','Since p-value(=%f)'%p_value,'>','alpha(=%.2f)'%alpha,'''We fail to reject the null hypothesis H0. TRADE IS BALANCED''', flush=True)
     return {
         'isBalanced': True,
         'message': 'TRADE IS BALANCED with a p-value of {}, alpha of {}'.format(p_value, alpha)
