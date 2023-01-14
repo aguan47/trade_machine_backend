@@ -66,7 +66,7 @@ def get_player_stats(plyrs):
 
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def hello_world():
     data = request.json
     to_be_traded = data['toBeTraded']
