@@ -69,7 +69,7 @@ def get_player_stats(plyrs):
 
 
 @app.route("/", methods=['GET', 'POST'])
-def hello_world():
+def get_trade():
     data = request.json
     to_be_traded = data['toBeTraded']
     to_get = data['toGet']
@@ -107,7 +107,7 @@ def hello_world():
     player_stats2 = pd.concat(frame2)
 
     player_stats1['NBA_FANTASY_PTS'] = (player_stats1['FGM']*1) + (player_stats1['FGA']*-0.5) + ((player_stats1['FTM'] - player_stats1['FTA'])*0.5) + (player_stats1['FG3M']*1) + \
-            (player_stats1['PTS']*1) + (player_stats1['REB']*1.2) + (player_stats1['AST']*1.5) + (player_stats1['STL']*3) + (player_stats1['BLK']*3) + (player_stats1['TOV']*-1)
+            (player_stats1['PTS']*1) + (player_stats1['REB']*1.2) + (player_stats1['AST']*1.5) + (player_stats1['STL']*2) + (player_stats1['BLK']*2) + (player_stats1['TOV']*-1)
 
     player_stats2['NBA_FANTASY_PTS'] = (player_stats2['FGM']*1) + (player_stats2['FGA']*-0.5) + ((player_stats2['FTM'] - player_stats2['FTA'])*0.5) + (player_stats2['FG3M']*1) + \
             (player_stats2['PTS']*1) + (player_stats2['REB']*1.2) + (player_stats2['AST']*1.5) + (player_stats2['STL']*2) + (player_stats2['BLK']*2) + (player_stats2['TOV']*-1)
@@ -121,18 +121,24 @@ def hello_world():
     trade1 = player_stats1.NBA_FANTASY_PTS
     trade2 = player_stats2.NBA_FANTASY_PTS
 
+    print(trade1)
+    print(trade2)
+
     t_value, p_value = stats.ttest_ind(trade1, trade2)
     alpha = 0.05
+
+    list1_player_names_string = ' '.join(list1)
+    list2_player_names_string = ' '.join(list2)
 
     if p_value <= alpha:
         print('Conclusion:','Since p-value(=%f)'%p_value,'<','alpha(=%.2f)'%alpha,'''We reject the null hypothesis H0. TRADE IS NOT BALANCED at %.2f level of significance.'''%alpha, flush=True)
         return {
             'isBalanced': False,
-            'message': 'TRADE IS NOT BALANCED with a p-value of {}, alpha of {}'.format(p_value, alpha)
+            'message': f'Trading {list1_player_names_string} for {list2_player_names_string}'
         }
 
     print('Conclusion:','Since p-value(=%f)'%p_value,'>','alpha(=%.2f)'%alpha,'''We fail to reject the null hypothesis H0. TRADE IS BALANCED''', flush=True)
     return {
         'isBalanced': True,
-        'message': 'TRADE IS BALANCED with a p-value of {}, alpha of {}'.format(p_value, alpha)
+        'message': f'Trading {list1_player_names_string} for {list2_player_names_string}'
     }
