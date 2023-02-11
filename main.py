@@ -1,11 +1,9 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask import request
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="build/static", template_folder="build")
 CORS(app)
-
-print("Running Flask", flush=True)
 
 import pandas as pd
 import time
@@ -66,8 +64,6 @@ def get_player_stats(plyrs):
     return plyr_stats
 
 
-
-
 @app.route("/trade", methods=['POST'])
 def get_trade():
     data = request.json
@@ -82,8 +78,6 @@ def get_trade():
     list2 = matching(to_get)
 
     print(f'\n Trading {list1} for {list2}')
-    print('Getting player info...', flush=True)
-
 
 
     # Get the information of the players
@@ -94,8 +88,6 @@ def get_trade():
     team1_plyr = player_id1.PLAYER_ID
     team2_plyr = player_id2.PLAYER_ID
 
-
-    print('Getting player stats...', flush=True)
 
     plyr_ros1 = get_player_stats(team1_plyr)
     plyr_ros2 = get_player_stats(team2_plyr)
@@ -113,8 +105,6 @@ def get_trade():
             (player_stats2['PTS']*1) + (player_stats2['REB']*1.2) + (player_stats2['AST']*1.5) + (player_stats2['STL']*2) + (player_stats2['BLK']*2) + (player_stats2['TOV']*-1)
 
 
-    print('Performing statistical test...\n', flush=True)
-
     # Statistical tests
     from scipy import stats
 
@@ -131,14 +121,17 @@ def get_trade():
     list2_player_names_string = ' '.join(list2)
 
     if p_value <= alpha:
-        print('Conclusion:','Since p-value(=%f)'%p_value,'<','alpha(=%.2f)'%alpha,'''We reject the null hypothesis H0. TRADE IS NOT BALANCED at %.2f level of significance.'''%alpha, flush=True)
         return {
             'isBalanced': False,
             'message': f'Trading {list1_player_names_string} for {list2_player_names_string}'
         }
 
-    print('Conclusion:','Since p-value(=%f)'%p_value,'>','alpha(=%.2f)'%alpha,'''We fail to reject the null hypothesis H0. TRADE IS BALANCED''', flush=True)
     return {
         'isBalanced': True,
         'message': f'Trading {list1_player_names_string} for {list2_player_names_string}'
     }
+
+
+@app.route("/", methods=['GET'])
+def homepage():
+    return render_template("index.html")
